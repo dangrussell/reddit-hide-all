@@ -1,26 +1,18 @@
 // ==UserScript==
-// @name          Reddit Hide All
-// @namespace     http://userscripts.org/users/dbeck
-// @description   Adds a button next to the logo to Hide All 
-// @include       http://reddit.com/*
-// @include       http://*.reddit.com/* 
-// @include       https://www.reddit.com/
-// @include       https://www.reddit.com/*
-// @include       https://*.reddit.com/*
-// @exclude       http://www.reddit.com/comscore-iframe/*
-// @exclude       http://static.reddit.com/ads/*
-// @version       5
-// @date          2010.04.20
-// @creator       reddit@douglasbeck.com
-// @homepage      http://douglasbeck.com/scripts/reddit/
+// @name Reddit Hide All
+// @namespace https://github.com/dangrussell/reddit-hide-all
+// @description Adds a button next to the logo to Hide All
+// @include https://*.reddit.com/*
+// @version 6.0.0
+// @author Douglas Beck <reddit@douglasbeck.com> (https://douglasbeck.com/)
+// @copyright 2010, Douglas Beck (https://douglasbeck.com/)
 // @grant GM_addStyle
-
+// @homepageURL https://github.com/dangrussell/reddit-hide-all
+// @updateURL https://raw.githubusercontent.com/dangrussell/reddit-hide-all/master/reddit-hide-all.js
+// @downloadURL https://raw.githubusercontent.com/dangrussell/reddit-hide-all/master/reddit-hide-all.js
+// @contributor Dan Russell (https://github.com/dangrussell/)
 // ==/UserScript==
 
-/*
-	if you have any comments or suggestions 
-	send a reddit message to: dougletts
-*/
 var code_string = "(" + function() {
 	
 	//helper funciton
