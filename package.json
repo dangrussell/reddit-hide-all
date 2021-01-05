@@ -20,7 +20,7 @@
   },
   "homepage": "https://github.com/dangrussell/reddit-hide-all#readme",
   "devDependencies": {
-    "eslint": "^6.8.0",
+    "eslint": "^7.17.0",
     "eslint-config-google": "^0.14.0"
   }
 }

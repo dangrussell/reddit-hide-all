@@ -3,7 +3,7 @@
 // @namespace https://github.com/dangrussell/reddit-hide-all
 // @description Adds a button next to the logo to Hide All
 // @include https://*.reddit.com/*
-// @version 6.0.0
+// @version 7.0.0
 // @author Douglas Beck <reddit@douglasbeck.com> (https://douglasbeck.com/)
 // @copyright 2010, Douglas Beck (https://douglasbeck.com/)
 // @grant GM_addStyle
@@ -14,55 +14,53 @@
 // ==/UserScript==
 
 const codeString = '(' + function() {
-	// helper funciton
-	function xpath(p, context) {
-		if (!context) {
-			context = document;
-		}
-		// let i;
-		const arr = [];
-		const xpr = document.evaluate(p, context, null, XPathResult.UNORDERED_NODE_SNAPSHOT_TYPE, null);
-		for (const i = 0; item = xpr.snapshotItem(i); i++) {
-			arr.push(item);
-		}
-		return arr;
-	}
+	// grab tabmenu at top of page
+	const tabmenu = document.querySelector('#header-bottom-left > ul');
 
-	// grab list at top of page
-	const list = xpath('//div[@id="header-bottom-left"]/ul')[0];
-	if (typeof list == 'undefined' || !list) {
+	if (tabmenu === null) {
 		return;
 	}
+
+	let modhash = '';
+
+	async function getData(url) {
+		const response = await fetch(url);
+		return response.json();
+	}
+	getData('/api/me.json').then(
+		(data) => {
+			modhash = data.data.modhash;
+		},
+	);
+
+	const id = 'reddit-hide-all';
 
 	// create link with hide functionality
 	const link = document.createElement('a');
 	link.setAttribute('href', '#');
-	link.setAttribute('id', 'reddit-hide-all');
+	link.setAttribute('id', id);
 	link.innerHTML = 'hide all';
+
 	link.addEventListener('click', function(event) {
-		// ajax loading spinner
-		const spinner = {
+		const rha = document.getElementById(id);
+
+		// ajax loading loadingIndicator
+		const loadingIndicator = {
 			lock: 0,
 			remove: function() {
-				--spinner.lock;
-				if (spinner.lock == 0) {
-					$('#reddit-hide-all').css('background', '#EFF7FF');
+				--loadingIndicator.lock;
+				if (loadingIndicator.lock == 0) {
+					rha.style.backgroundImage = 'none';
+					rha.style.backgroundRepeat = 'repeat';
+					rha.style.backgroundPosition = 'top left';
 				}
 			},
 			add: function() {
-				// created ajax spinner with http://www.ajaxload.info/ #EFF7FF and #FF4500 (orangered)
-				// created data uri with http://www.sveinbjorn.org/dataurlmaker
-				$('#reddit-hide-all').css('background', 'url("data:image/gif;base64,R0lGODlhEAAQAPIAAO/3//9FAPLMwv'+
-				'pzQv9FAPiJYvafgvWqkiH+GkNyZWF0ZWQgd2l0aCBhamF4bG9hZC5pbmZvACH5BAAKAAAAIf8LTkVUU0NBUEUyLjADAQAAACw'+
-				'AAAAAEAAQAAADMwi63P4wyklrE2MIOggZnAdOmGYJRbExwroUmcG2LmDEwnHQLVsYOd2mBzkYDAdKa+dIAAAh+QQACgABACwA'+
-				'AAAAEAAQAAADNAi63P5OjCEgG4QMu7DmikRxQlFUYDEZIGBMRVsaqHwctXXf7WEYB4Ag1xjihkMZsiUkKhIAIfkEAAoAAgAsA'+
-				'AAAABAAEAAAAzYIujIjK8pByJDMlFYvBoVjHA70GU7xSUJhmKtwHPAKzLO9HMaoKwJZ7Rf8AYPDDzKpZBqfvwQAIfkEAAoAAw'+
-				'AsAAAAABAAEAAAAzMIumIlK8oyhpHsnFZfhYumCYUhDAQxRIdhHBGqRoKw0R8DYlJd8z0fMDgsGo/IpHI5TAAAIfkEAAoABAA'+
-				'sAAAAABAAEAAAAzIIunInK0rnZBTwGPNMgQwmdsNgXGJUlIWEuR5oWUIpz8pAEAMe6TwfwyYsGo/IpFKSAAAh+QQACgAFACwA'+
-				'AAAAEAAQAAADMwi6IMKQORfjdOe82p4wGccc4CEuQradylesojEMBgsUc2G7sDX3lQGBMLAJibufbSlKAAAh+QQACgAGACwAA'+
-				'AAAEAAQAAADMgi63P7wCRHZnFVdmgHu2nFwlWCI3WGc3TSWhUFGxTAUkGCbtgENBMJAEJsxgMLWzpEAACH5BAAKAAcALAAAAA'+
-				'AQABAAAAMyCLrc/jDKSatlQtScKdceCAjDII7HcQ4EMTCpyrCuUBjCYRgHVtqlAiB1YhiCnlsRkAAAOwAAAAAAAAAAAA==") '+
-				'#EFF7FF no-repeat center');
+				// created ajax loading indicator with http://www.ajaxload.info/ transparent background and #FF4500 (orangered)
+				// created data uri with https://dopiaza.org/tools/datauri/index.php
+				rha.style.backgroundImage = 'url("data:image/gif;base64,R0lGODlhEAALAPQAAP////9FAP7j2v7c0P7v6v5JBv9FAP5mLv6jgv6KYP7Muv5dIv56Sv6piv6NZP7Pvv5gJv5HBP59Tv7s5v7i2P729P5tOP7l3P718v7Jtv65oP7Yyv7y7gAAAAAAAAAAACH/C05FVFNDQVBFMi4wAwEAAAAh/hpDcmVhdGVkIHdpdGggYWpheGxvYWQuaW5mbwAh+QQJCwAAACwAAAAAEAALAAAFLSAgjmRpnqSgCuLKAq5AEIM4zDVw03ve27ifDgfkEYe04kDIDC5zrtYKRa2WQgAh+QQJCwAAACwAAAAAEAALAAAFJGBhGAVgnqhpHIeRvsDawqns0qeN5+y967tYLyicBYE7EYkYAgAh+QQJCwAAACwAAAAAEAALAAAFNiAgjothLOOIJAkiGgxjpGKiKMkbz7SN6zIawJcDwIK9W/HISxGBzdHTuBNOmcJVCyoUlk7CEAAh+QQJCwAAACwAAAAAEAALAAAFNSAgjqQIRRFUAo3jNGIkSdHqPI8Tz3V55zuaDacDyIQ+YrBH+hWPzJFzOQQaeavWi7oqnVIhACH5BAkLAAAALAAAAAAQAAsAAAUyICCOZGme1rJY5kRRk7hI0mJSVUXJtF3iOl7tltsBZsNfUegjAY3I5sgFY55KqdX1GgIAIfkECQsAAAAsAAAAABAACwAABTcgII5kaZ4kcV2EqLJipmnZhWGXaOOitm2aXQ4g7P2Ct2ER4AMul00kj5g0Al8tADY2y6C+4FIIACH5BAkLAAAALAAAAAAQAAsAAAUvICCOZGme5ERRk6iy7qpyHCVStA3gNa/7txxwlwv2isSacYUc+l4tADQGQ1mvpBAAIfkECQsAAAAsAAAAABAACwAABS8gII5kaZ7kRFGTqLLuqnIcJVK0DeA1r/u3HHCXC/aKxJpxhRz6Xi0ANAZDWa+kEAA7AAAAAAAAAAAA")';
+				rha.style.backgroundRepeat = 'no-repeat';
+				rha.style.backgroundPosition = 'center';
 			},
 		};
 
@@ -71,44 +69,40 @@ const codeString = '(' + function() {
 		// I DON'T like how many ajax request this makes so I've submitted a feature request:
 		// http://code.reddit.com/ticket/576
 		$.fn.extend({
-			redditHide: function(op, parameters, link) {
+			redditHide: function(parameters, link) {
+				const op = '/api/hide';
+				parameters.uh = modhash;
 				$.post(op, parameters, function() {
 					hide_thing($(link).parents('form'));
-					spinner.remove();
+					loadingIndicator.remove();
 				}, null);
-				return ++spinner.lock;
+				return ++loadingIndicator.lock;
 			},
 		});
 
 		// grab & hide all
 		const links = document.getElementsByTagName('a');
-		const count = 0;
+		let count = 0;
 
-		for (const i=0; i<links.length; i++) {
+		for (let i = 0; i < links.length; i++) {
 			if (links[i].innerHTML === 'hide' && $(links[i]).thing().css('display') === 'block') {
-				// add spinner background image
-				spinner.add();
+				// add loadingIndicator background image
+				loadingIndicator.add();
 
-				// using just the onclick no longer works :(
-				// change_state(links[i], 'hide', hide_thing);
-
-				// looking at: http://code.reddit.com/browser/r2/r2/public/static/js/jquery.reddit.js?rev=77e51a304d1b4034614d75c5bf4c07b216400a42#L141
+				// looking at: https://github.com/reddit-archive/reddit/blob/master/r2/r2/public/static/js/jquery.reddit.js?rev=77e51a304d1b4034614d75c5bf4c07b216400a42#L141
 				const form = $(links[i]).parents('form');
 				const id = $(links[i]).thing_id();
-				const op = '/api/hide';
-				const parameters = get_form_fields(form, {id: id});
-				if (reddit.logged) {
-					parameters.uh = reddit.modhash;
-				}
 
-				$().redditHide(op, parameters, links[i]);
+				const parameters = get_form_fields(form, {id: id});
+
+				$().redditHide(parameters, links[i]);
 
 				++count;
 			}
 		}
 
-		if (count===0) {
-			alert('None Found.');
+		if (count === 0) {
+			alert('None found.');
 		}
 
 		// stop default click action
@@ -116,13 +110,14 @@ const codeString = '(' + function() {
 		event.preventDefault();
 	}, true);
 
-	// create new list item with link
+	// create new tabmenu item with link
 	const item = document.createElement('li');
 	item.appendChild(link);
 
-	// insert at top of the list
-	const topItem = list.getElementsByTagName('li')[0];
-	list.insertBefore(item, topItem);
+	// insert at top of the tabmenu
+	// const topItem = tabmenu.getElementsByTagName('li')[0];
+	const topItem = document.querySelector('#header-bottom-left > ul > li:first-of-type');
+	tabmenu.insertBefore(item, topItem);
 } + ')()';
 
 // workaround for Google Chrome
@@ -131,7 +126,7 @@ const codeString = '(' + function() {
 // (maybe one day 'hiding' will be added to the API)
 const script = document.createElement('script');
 script.type = 'text/javascript';
-script.appendChild( document.createTextNode( codeString ) );
+script.appendChild(document.createTextNode(codeString));
 document.body.appendChild(script);
 
 /*
