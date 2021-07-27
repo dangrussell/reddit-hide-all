@@ -3,7 +3,7 @@
 // @namespace https://github.com/dangrussell/reddit-hide-all
 // @description Adds a button next to the logo to Hide All
 // @include https://*.reddit.com/*
-// @version 7.0.0
+// @version 7.0.1
 // @author Douglas Beck <reddit@douglasbeck.com> (https://douglasbeck.com/)
 // @copyright 2010, Douglas Beck (https://douglasbeck.com/)
 // @grant GM_addStyle
@@ -118,7 +118,7 @@ const codeString = '(' + function() {
 	// const topItem = tabmenu.getElementsByTagName('li')[0];
 	const topItem = document.querySelector('#header-bottom-left > ul > li:first-of-type');
 	tabmenu.insertBefore(item, topItem);
-} + ')()';
+} + ')();';
 
 // workaround for Google Chrome
 // I realize this is NOT the nice way to do such things but from what I
@@ -126,6 +126,7 @@ const codeString = '(' + function() {
 // (maybe one day 'hiding' will be added to the API)
 const script = document.createElement('script');
 script.type = 'text/javascript';
+script.id = 'reddit-hide-all';
 script.appendChild(document.createTextNode(codeString));
 document.body.appendChild(script);
 
