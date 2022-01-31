@@ -3,7 +3,7 @@
 // @namespace https://github.com/dangrussell/reddit-hide-all
 // @description Adds a button next to the logo to Hide All
 // @include https://*.reddit.com/*
-// @version 7.0.1
+// @version 7.1.0
 // @author Douglas Beck <reddit@douglasbeck.com> (https://douglasbeck.com/)
 // @copyright 2010, Douglas Beck (https://douglasbeck.com/)
 // @grant GM_addStyle
@@ -13,7 +13,9 @@
 // @contributor Dan Russell (https://github.com/dangrussell/)
 // ==/UserScript==
 
-const codeString = '(' + function() {
+/* eslint-env jquery */
+
+(() => {
 	// grab tabmenu at top of page
 	const tabmenu = document.querySelector('#header-bottom-left > ul');
 
@@ -23,7 +25,11 @@ const codeString = '(' + function() {
 
 	let modhash = '';
 
-	async function getData(url) {
+	/**
+	 * @param {string} url 
+	 * @returns
+	 */
+	async const getData = (url) => {
 		const response = await fetch(url);
 		return response.json();
 	}
@@ -41,21 +47,21 @@ const codeString = '(' + function() {
 	link.setAttribute('id', id);
 	link.innerHTML = 'hide all';
 
-	link.addEventListener('click', function(event) {
+	link.addEventListener('click', (event) => {
 		const rha = document.getElementById(id);
 
 		// ajax loading loadingIndicator
 		const loadingIndicator = {
 			lock: 0,
-			remove: function() {
+			remove: () => {
 				--loadingIndicator.lock;
-				if (loadingIndicator.lock == 0) {
+				if (loadingIndicator.lock === 0) {
 					rha.style.backgroundImage = 'none';
 					rha.style.backgroundRepeat = 'repeat';
 					rha.style.backgroundPosition = 'top left';
 				}
 			},
-			add: function() {
+			add: () => {
 				// created ajax loading indicator with http://www.ajaxload.info/ transparent background and #FF4500 (orangered)
 				// created data uri with https://dopiaza.org/tools/datauri/index.php
 				rha.style.backgroundImage = 'url("data:image/gif;base64,R0lGODlhEAALAPQAAP////9FAP7j2v7c0P7v6v5JBv9FAP5mLv6jgv6KYP7Muv5dIv56Sv6piv6NZP7Pvv5gJv5HBP59Tv7s5v7i2P729P5tOP7l3P718v7Jtv65oP7Yyv7y7gAAAAAAAAAAACH/C05FVFNDQVBFMi4wAwEAAAAh/hpDcmVhdGVkIHdpdGggYWpheGxvYWQuaW5mbwAh+QQJCwAAACwAAAAAEAALAAAFLSAgjmRpnqSgCuLKAq5AEIM4zDVw03ve27ifDgfkEYe04kDIDC5zrtYKRa2WQgAh+QQJCwAAACwAAAAAEAALAAAFJGBhGAVgnqhpHIeRvsDawqns0qeN5+y967tYLyicBYE7EYkYAgAh+QQJCwAAACwAAAAAEAALAAAFNiAgjothLOOIJAkiGgxjpGKiKMkbz7SN6zIawJcDwIK9W/HISxGBzdHTuBNOmcJVCyoUlk7CEAAh+QQJCwAAACwAAAAAEAALAAAFNSAgjqQIRRFUAo3jNGIkSdHqPI8Tz3V55zuaDacDyIQ+YrBH+hWPzJFzOQQaeavWi7oqnVIhACH5BAkLAAAALAAAAAAQAAsAAAUyICCOZGme1rJY5kRRk7hI0mJSVUXJtF3iOl7tltsBZsNfUegjAY3I5sgFY55KqdX1GgIAIfkECQsAAAAsAAAAABAACwAABTcgII5kaZ4kcV2EqLJipmnZhWGXaOOitm2aXQ4g7P2Ct2ER4AMul00kj5g0Al8tADY2y6C+4FIIACH5BAkLAAAALAAAAAAQAAsAAAUvICCOZGme5ERRk6iy7qpyHCVStA3gNa/7txxwlwv2isSacYUc+l4tADQGQ1mvpBAAIfkECQsAAAAsAAAAABAACwAABS8gII5kaZ7kRFGTqLLuqnIcJVK0DeA1r/u3HHCXC/aKxJpxhRz6Xi0ANAZDWa+kEAA7AAAAAAAAAAAA")';
@@ -69,10 +75,16 @@ const codeString = '(' + function() {
 		// I DON'T like how many ajax request this makes so I've submitted a feature request:
 		// http://code.reddit.com/ticket/576
 		$.fn.extend({
-			redditHide: function(parameters, link) {
+			/**
+			 * @param {{id: string; executed: 'hidden'; uh: string; renderstyle: 'html';}} parameters
+			 * @param {HTMLAnchorElement} link
+			 * @returns
+			 */
+			redditHide: (parameters, link) => {
 				const op = '/api/hide';
 				parameters.uh = modhash;
-				$.post(op, parameters, function() {
+				$.post(op, parameters, () => {
+					// eslint-disable-next-line no-undef
 					hide_thing($(link).parents('form'));
 					loadingIndicator.remove();
 				}, null);
@@ -93,7 +105,8 @@ const codeString = '(' + function() {
 				const form = $(links[i]).parents('form');
 				const id = $(links[i]).thing_id();
 
-				const parameters = get_form_fields(form, {id: id});
+				// eslint-disable-next-line no-undef
+				const parameters = get_form_fields(form, { id: id });
 
 				$().redditHide(parameters, links[i]);
 
@@ -118,17 +131,7 @@ const codeString = '(' + function() {
 	// const topItem = tabmenu.getElementsByTagName('li')[0];
 	const topItem = document.querySelector('#header-bottom-left > ul > li:first-of-type');
 	tabmenu.insertBefore(item, topItem);
-} + ')();';
-
-// workaround for Google Chrome
-// I realize this is NOT the nice way to do such things but from what I
-// read there's no other way to access Reddit's native JS code
-// (maybe one day 'hiding' will be added to the API)
-const script = document.createElement('script');
-script.type = 'text/javascript';
-script.id = 'reddit-hide-all';
-script.appendChild(document.createTextNode(codeString));
-document.body.appendChild(script);
+})();
 
 /*
 Another updated version: https://openuserjs.org/scripts/LdizL/Reddit_Hide_All/source

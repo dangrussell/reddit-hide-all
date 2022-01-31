@@ -1,7 +1,9 @@
 module.exports = {
+    'root': true,
     'env': {
         'greasemonkey': true,
         'es6': true,
+        'jquery': true,
     },
     'extends': [
         'google',
@@ -18,6 +20,7 @@ module.exports = {
         'linebreak-style': 'off',
         'max-len': 'off',
         'no-tabs': 'off',
+        'object-curly-spacing': 'always',
         'require-jsdoc': 'off',
     },
 };
