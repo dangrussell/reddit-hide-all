@@ -3,7 +3,7 @@
 // @namespace https://github.com/dangrussell/reddit-hide-all
 // @description Adds a button next to the logo to Hide All
 // @include https://*.reddit.com/*
-// @version 7.1.0
+// @version 7.1.1
 // @author Douglas Beck <reddit@douglasbeck.com> (https://douglasbeck.com/)
 // @copyright 2010, Douglas Beck (https://douglasbeck.com/)
 // @grant GM_addStyle
@@ -29,7 +29,7 @@
 	 * @param {string} url 
 	 * @returns
 	 */
-	async const getData = (url) => {
+	async function getData(url) {
 		const response = await fetch(url);
 		return response.json();
 	}
