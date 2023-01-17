@@ -3,7 +3,7 @@
 // @namespace https://github.com/dangrussell/reddit-hide-all
 // @description Adds a button next to the logo to Hide All
 // @include https://*.reddit.com/*
-// @version 7.1.1
+// @version 7.1.2
 // @author Douglas Beck <reddit@douglasbeck.com> (https://douglasbeck.com/)
 // @copyright 2010, Douglas Beck (https://douglasbeck.com/)
 // @grant GM_addStyle
@@ -14,6 +14,14 @@
 // ==/UserScript==
 
 /* eslint-env jquery */
+
+/**
+* @typedef {object} RedditHideParameters
+* @property {string} id Id
+* @property {string} executed 'hidden'
+* @property {string} uh Mod Hash
+* @property {string} renderstyle 'html'
+*/
 
 (() => {
 	// grab tabmenu at top of page
@@ -26,8 +34,8 @@
 	let modhash = '';
 
 	/**
-	 * @param {string} url 
-	 * @returns
+	 * @param {string} url The first number.
+	 * @return {Promise<any>}
 	 */
 	async function getData(url) {
 		const response = await fetch(url);
@@ -76,9 +84,9 @@
 		// http://code.reddit.com/ticket/576
 		$.fn.extend({
 			/**
-			 * @param {{id: string; executed: 'hidden'; uh: string; renderstyle: 'html';}} parameters
-			 * @param {HTMLAnchorElement} link
-			 * @returns
+			 * @param {RedditHideParameters} parameters Parameters
+			 * @param {HTMLAnchorElement} link HTML Anchor Element
+			 * @return {number}
 			 */
 			redditHide: (parameters, link) => {
 				const op = '/api/hide';

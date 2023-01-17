@@ -20,7 +20,7 @@ module.exports = {
         'linebreak-style': 'off',
         'max-len': 'off',
         'no-tabs': 'off',
-        'object-curly-spacing': 'always',
+        'object-curly-spacing': 'off',
         'require-jsdoc': 'off',
     },
 };
