@@ -1,6 +1,6 @@
 {
   "name": "reddit-hide-all",
-  "version": "8.0.0",
+  "version": "8.0.1",
   "description": "Adds a \"Hide All\" button on Reddit",
   "main": "reddit-hide-all.user.js",
   "scripts": {

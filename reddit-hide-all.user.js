@@ -2,8 +2,8 @@
 // @name         Reddit Hide All
 // @namespace    https://github.com/dangrussell/reddit-hide-all
 // @description	 Adds a button next to the logo to Hide All
-// @match        *.reddit.com
-// @version      8.0.0
+// @match        https://*.reddit.com/*
+// @version      8.0.1
 // @author       Douglas Beck <reddit@douglasbeck.com> (https://douglasbeck.com/)
 // @copyright    2010, Douglas Beck (https://douglasbeck.com/)
 // @grant        GM_addStyle
@@ -39,12 +39,12 @@
 	 * @return {Promise<any>}
 	 */
 	async function getData(url) {
-		const response = await fetch(url, { 'User-agent': 'reddit-hide-all 8.0.0' });
+		const response = await fetch(url, { 'User-Agent': 'reddit-hide-all 8.0.0' });
 		return response.json();
 	}
 	getData('/api/me.json').then(
-		(data) => {
-			modhash = data.data.modhash;
+		(meJson) => {
+			modhash = meJson.data.modhash;
 		},
 	);
 
@@ -54,6 +54,7 @@
 	const link = document.createElement('a');
 	link.setAttribute('href', '#');
 	link.setAttribute('id', id);
+	link.setAttribute('class', 'choice');
 	link.innerHTML = 'hide all';
 
 	link.addEventListener('click', (event) => {
