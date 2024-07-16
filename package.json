@@ -1,8 +1,8 @@
 {
   "name": "reddit-hide-all",
-  "version": "7.1.2",
+  "version": "8.0.0",
   "description": "Adds a \"Hide All\" button on Reddit",
-  "main": "reddit-hide-all.js",
+  "main": "reddit-hide-all.user.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -20,7 +20,10 @@
   },
   "homepage": "https://github.com/dangrussell/reddit-hide-all#readme",
   "devDependencies": {
-    "eslint": "^8.32.0",
-    "eslint-config-google": "^0.14.0"
+    "@eslint/js": "^9.7.0",
+    "eslint": "^9.7.0",
+    "eslint-config-google": "^0.14.0",
+    "eslint-plugin-userscripts": "^0.5.3",
+    "globals": "^15.8.0"
   }
 }
