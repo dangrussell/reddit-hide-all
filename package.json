@@ -20,8 +20,8 @@
   },
   "homepage": "https://github.com/dangrussell/reddit-hide-all#readme",
   "devDependencies": {
-    "@eslint/js": "^9.39.5",
-    "eslint": "^9.39.5",
+    "@eslint/js": "^10.0.1",
+    "eslint": "^10.13.0",
     "eslint-config-google": "^0.14.0",
     "eslint-plugin-userscripts": "^0.5.6",
     "globals": "^15.15.0"
