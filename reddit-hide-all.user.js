@@ -3,7 +3,8 @@
 // @namespace    https://github.com/dangrussell/reddit-hide-all
 // @description	 Adds a button next to the logo to Hide All
 // @match        https://*.reddit.com/*
-// @version      8.0.1
+// @icon         https://www.redditstatic.com/shreddit/assets/favicon/192x192.png
+// @version      8.0.2
 // @author       Douglas Beck <reddit@douglasbeck.com> (https://douglasbeck.com/)
 // @copyright    2010, Douglas Beck (https://douglasbeck.com/)
 // @grant        GM_addStyle
@@ -13,8 +14,6 @@
 // @downloadURL	 https://raw.githubusercontent.com/dangrussell/reddit-hide-all/master/reddit-hide-all.user.js
 // @contributor	 Dan Russell (https://github.com/dangrussell/)
 // ==/UserScript==
-
-/* eslint-env jquery */
 
 /**
 * @typedef {object} RedditHideParameters
@@ -46,7 +45,9 @@
 		(meJson) => {
 			modhash = meJson.data.modhash;
 		},
-	);
+	).catch((error) => {
+		console.error('Reddit Hide All: Failed to fetch user profile', error);
+	});
 
 	const id = 'reddit-hide-all';
 
@@ -94,8 +95,7 @@
 				const op = '/api/hide';
 				parameters.uh = modhash;
 				$.post(op, parameters, () => {
-					// eslint-disable-next-line no-undef
-					hide_thing($(link).parents('form'));
+					// hide_thing($(link).parents('form'));
 					loadingIndicator.remove();
 				}, null);
 				return ++loadingIndicator.lock;
@@ -115,8 +115,7 @@
 				const form = $(links[i]).parents('form');
 				const id = $(links[i]).thing_id();
 
-				// eslint-disable-next-line no-undef
-				const parameters = get_form_fields(form, { id: id });
+				// const parameters = get_form_fields(form, { id: id });
 
 				$().redditHide(parameters, links[i]);
 

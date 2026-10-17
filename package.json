@@ -4,7 +4,7 @@
   "description": "Adds a \"Hide All\" button on Reddit",
   "main": "reddit-hide-all.user.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "eslint ."
   },
   "repository": {
     "type": "git",
