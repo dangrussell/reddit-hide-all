@@ -15,6 +15,8 @@
 // @contributor	 Dan Russell (https://github.com/dangrussell/)
 // ==/UserScript==
 
+/* global $, hide_thing, get_form_fields */
+
 /**
 * @typedef {object} RedditHideParameters
 * @property {string} id Id
@@ -94,10 +96,15 @@
 			redditHide: (parameters, link) => {
 				const op = '/api/hide';
 				parameters.uh = modhash;
+				const thing = $(link).closest('.thing');
 				$.post(op, parameters, () => {
-					// hide_thing($(link).parents('form'));
+					thing.slideUp(200, function() {
+						$(this).remove();
+					});
 					loadingIndicator.remove();
-				}, null);
+				}, null).fail(() => {
+					loadingIndicator.remove();
+				});
 				return ++loadingIndicator.lock;
 			},
 		});
@@ -111,11 +118,10 @@
 				// add loadingIndicator background image
 				loadingIndicator.add();
 
-				// looking at: https://github.com/reddit-archive/reddit/blob/master/r2/r2/public/static/js/jquery.reddit.js?rev=77e51a304d1b4034614d75c5bf4c07b216400a42#L141
 				const form = $(links[i]).parents('form');
 				const id = $(links[i]).thing_id();
 
-				// const parameters = get_form_fields(form, { id: id });
+				const parameters = get_form_fields(form, { id: id });
 
 				$().redditHide(parameters, links[i]);
 
